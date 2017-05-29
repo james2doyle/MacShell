@@ -18,6 +18,12 @@ def is_mac():
     return platform.system() == 'Darwin'
 
 
+def is_sublime_v2():
+    # Sublime Text 2 doesn't have loaded/unloaded handlers, so trigger startup
+    # code manually, first taking care to clean up any messes from last time.
+    return int(sublime.version()) < 3000
+
+
 def get_sys_path():
     command = ("TERM=ansi CLICOLOR=\"\" SUBLIME=1 "
                "/usr/bin/login -fqpl $USER $SHELL -l -c "
@@ -83,9 +89,8 @@ if not is_mac():
     print(message)
     sys.exit()
 
-# Sublime Text 2 doesn't have loaded/unloaded handlers, so trigger startup code
-# manually, first taking care to clean up any messes from last time.
-if int(sublime.version()) < 3000:
+
+if is_sublime_v2():
     # Stash the original PATH in the env variable _ST_ORIG_PATH.
     if '_ST_ORIG_PATH' in environ:
         # If _ST_ORIG_PATH exists, restore it as the true path.
