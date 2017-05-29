@@ -9,18 +9,12 @@ from subprocess import PIPE, Popen
 import sublime
 import sublime_plugin
 
+fix_path_settings = None
+original_env = {}
+
 
 def is_mac():
     return platform.system() == "Darwin"
-
-
-if not is_mac():
-    print("FixMacPath will not be loaded because current OS is not Mac OS X ('Darwin'). Found '" + platform.system() + "'")
-    sys.exit()
-
-
-fix_path_settings = None
-original_env = {}
 
 
 def get_sys_path():
@@ -76,6 +70,11 @@ def plugin_unloaded():
     environ['PATH'] = original_env['PATH']
 
     fix_path_settings.clear_on_change('fixpath-reload')
+
+
+if not is_mac():
+    print("FixMacPath will not be loaded because current OS is not Mac OS X ('Darwin'). Found '" + platform.system() + "'")
+    sys.exit()
 
 
 # Sublime Text 2 doesn't have loaded/unloaded handlers, so trigger startup code manually, first
