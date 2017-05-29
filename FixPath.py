@@ -79,7 +79,7 @@ if not is_mac():
 # taking care to clean up any messes from last time.
 if int(sublime.version()) < 3000:
     # Stash the original PATH in the env variable _ST_ORIG_PATH.
-    if environ.has_key('_ST_ORIG_PATH'):
+    if '_ST_ORIG_PATH' in environ:
         # If _ST_ORIG_PATH exists, restore it as the true path.
         environ['PATH'] = environ['_ST_ORIG_PATH']
     else:
