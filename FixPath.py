@@ -6,10 +6,7 @@ from subprocess import Popen, PIPE
 
 
 def isMac():
-	if platform.system() == "Darwin":
-		return True
-	else:
-		return False
+	return platform.system() == "Darwin"
 
 
 if isMac():
