@@ -57,7 +57,7 @@ def fix_path():
     environ['PATH'] = curr_sys_path
 
     for pathItem in fix_path_settings.get('additional_path_items', []):
-        environ['PATH'] = pathItem + ':' + environ['PATH']
+        environ['PATH'] = '{}:{}'.format(pathItem, environ['PATH'])
 
     return True
 
