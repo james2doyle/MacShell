@@ -33,7 +33,6 @@ def get_sys_path():
     return sys_path_string
 
 
-
 def fix_path():
     curr_sys_path = get_sys_path()
     # Basic sanity check to make sure our new path is not empty
@@ -75,7 +74,6 @@ def plugin_unloaded():
 if not is_mac():
     print("FixMacPath will not be loaded because current OS is not Mac OS X ('Darwin'). Found '" + platform.system() + "'")
     sys.exit()
-
 
 # Sublime Text 2 doesn't have loaded/unloaded handlers, so trigger startup code manually, first
 # taking care to clean up any messes from last time.
