@@ -55,13 +55,13 @@ def fix_path():
 
 
 def plugin_loaded():
-    global fix_path_settings
+    global fix_path_settings, original_env
+
     fix_path_settings = sublime.load_settings("Preferences.sublime-settings")
     fix_path_settings.clear_on_change('fixpath-reload')
     fix_path_settings.add_on_change('fixpath-reload', fix_path)
 
     # Save the original environ (particularly the original PATH) to restore later
-    global original_env
     for key in environ:
         original_env[key] = environ[key]
 
@@ -69,11 +69,12 @@ def plugin_loaded():
 
 
 def plugin_unloaded():
+    global fix_path_settings
+
     # When we unload, reset PATH to original value. Otherwise, reloads of this plugin will cause
     # the PATH to be duplicated.
     environ['PATH'] = original_env['PATH']
 
-    global fix_path_settings
     fix_path_settings.clear_on_change('fixpath-reload')
 
 
