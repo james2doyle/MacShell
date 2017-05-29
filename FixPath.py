@@ -15,12 +15,16 @@ original_env = {}
 
 
 def is_mac():
+    """This package is only needed on Mac OS X or macOS."""
     return platform.system() == 'Darwin'
 
 
 def is_sublime_v2():
-    # Sublime Text 2 doesn't have loaded/unloaded handlers, so trigger startup
-    # code manually, first taking care to clean up any messes from last time.
+    """Check if user is running Sublime Text 2.
+
+    ST2 lacks loaded/unloaded handlers, so startup code must be triggered
+    manually, first taking care to clean up any messes from last time.
+    """
     return int(sublime.version()) < 3000
 
 
