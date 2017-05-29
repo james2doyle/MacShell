@@ -5,66 +5,66 @@ from os import environ
 from subprocess import Popen, PIPE
 
 
-def isMac():
+def is_mac():
 	return platform.system() == "Darwin"
 
 
-if isMac():
-	fixPathSettings = None
-	originalEnv = {}
+if is_mac():
+	fix_path_settings = None
+	original_env = {}
 
-	def getSysPath():
+	def get_sys_path():
 		command = "TERM=ansi CLICOLOR=\"\" SUBLIME=1 /usr/bin/login -fqpl $USER $SHELL -l -c 'TERM=ansi CLICOLOR=\"\" SUBLIME=1 printf \"%s\" \"$PATH\"'"
 
 		# Execute command with original environ. Otherwise, our changes to the PATH propogate down to
 		# the shell we spawn, which re-adds the system path & returns it, leading to duplicate values.
-		sysPath = Popen(command, stdout=PIPE, shell=True, env=originalEnv).stdout.read()
+		sys_path = Popen(command, stdout=PIPE, shell=True, env=original_env).stdout.read()
 
-		sysPathString = sysPath.decode("utf-8")
+		sys_path_string = sys_path.decode("utf-8")
 		# Remove ANSI control characters (see: http://www.commandlinefu.com/commands/view/3584/remove-color-codes-special-characters-with-sed )
-		sysPathString = re.sub(r'\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]', '', sysPathString)
-		sysPathString = sysPathString.strip().rstrip(':')
+		sys_path_string = re.sub(r'\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]', '', sys_path_string)
+		sys_path_string = sys_path_string.strip().rstrip(':')
 
 		# Decode the byte array into a string, remove trailing whitespace, remove trailing ':'
-		return sysPathString
+		return sys_path_string
 
 
 
-	def fixPath():
-		currSysPath = getSysPath()
+	def fix_path():
+		curr_sys_path = get_sys_path()
 		# Basic sanity check to make sure our new path is not empty
-		if len(currSysPath) < 1:
+		if len(curr_sys_path) < 1:
 			return False
 
-		environ['PATH'] = currSysPath
+		environ['PATH'] = curr_sys_path
 
-		for pathItem in fixPathSettings.get("additional_path_items", []):
+		for pathItem in fix_path_settings.get("additional_path_items", []):
 			environ['PATH'] = pathItem + ':' + environ['PATH']
 
 		return True
 
 
 	def plugin_loaded():
-		global fixPathSettings
-		fixPathSettings = sublime.load_settings("Preferences.sublime-settings")
-		fixPathSettings.clear_on_change('fixpath-reload')
-		fixPathSettings.add_on_change('fixpath-reload', fixPath)
+		global fix_path_settings
+		fix_path_settings = sublime.load_settings("Preferences.sublime-settings")
+		fix_path_settings.clear_on_change('fixpath-reload')
+		fix_path_settings.add_on_change('fixpath-reload', fix_path)
 
 		# Save the original environ (particularly the original PATH) to restore later
-		global originalEnv
+		global original_env
 		for key in environ:
-			originalEnv[key] = environ[key]
+			original_env[key] = environ[key]
 
-		fixPath()
+		fix_path()
 
 
 	def plugin_unloaded():
 		# When we unload, reset PATH to original value. Otherwise, reloads of this plugin will cause
 		# the PATH to be duplicated.
-		environ['PATH'] = originalEnv['PATH']
+		environ['PATH'] = original_env['PATH']
 
-		global fixPathSettings
-		fixPathSettings.clear_on_change('fixpath-reload')
+		global fix_path_settings
+		fix_path_settings.clear_on_change('fixpath-reload')
 
 
 	# Sublime Text 2 doesn't have loaded/unloaded handlers, so trigger startup code manually, first
@@ -82,5 +82,5 @@ if isMac():
 
 
 
-else:	# not isMac()
+else:	# not is_mac()
 	print("FixMacPath will not be loaded because current OS is not Mac OS X ('Darwin'). Found '" + platform.system() + "'")
