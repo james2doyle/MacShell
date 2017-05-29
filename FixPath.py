@@ -1,8 +1,12 @@
-from __future__ import division, absolute_import, print_function, unicode_literals
-import sublime, sublime_plugin
-import re, platform
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+import platform
+import re
 from os import environ
-from subprocess import Popen, PIPE
+from subprocess import PIPE, Popen
+
+import sublime
+import sublime_plugin
 
 
 def is_mac():
