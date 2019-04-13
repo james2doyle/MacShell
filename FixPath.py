@@ -43,7 +43,7 @@ def is_sublime_v2():
 def get_sys_path():
     """Get the $PATH environment variable from the OS.
 
-    The command to retrieve it is executed using the original environment; 
+    The command to retrieve it is executed using the original environment;
     otherwise, our PATH changes propogate down to the shell we spawn, which
     re-adds the system PATH, resulting in duplication.
 
@@ -111,7 +111,7 @@ def plugin_unloaded():
 
 
 if not is_mac():
-    message = ('FixMacPath will not be loaded because current OS is not Mac '
+    message = ('MacShell will not be loaded because current OS is not Mac '
                'OS X ("Darwin"). Found "{os}".').format(os=platform.system())
     print(message)
     sys.exit()
