@@ -39,6 +39,11 @@ def is_sublime_v2():
     """
     return int(sublime.version()) < 3000
 
+def run_command(command):
+    pipe = Popen(command, stdout=PIPE, shell=True, env=original_env)
+    sys_path = pipe.stdout.read()
+
+    return sys_path.decode('utf-8')
 
 def get_sys_path():
     """Get the $PATH environment variable from the OS.
@@ -52,14 +57,20 @@ def get_sys_path():
 
     [1]: http://www.commandlinefu.com/commands/view/3584/remove-color-codes-special-characters-with-sed  # noqa
     """
-    command = ("TERM=ansi CLICOLOR=\"\" SUBLIME=1 "
-               "/usr/bin/login -fqpl $USER $SHELL -l -c "
-               "'TERM=ansi CLICOLOR=\"\" SUBLIME=1 printf \"%s\" \"$PATH\"'")
+    current_shell = run_command("echo $SHELL").strip()
 
-    pipe = Popen(command, stdout=PIPE, shell=True, env=original_env)
-    sys_path = pipe.stdout.read()
+    # fish shell is wildly different than sh-based shells
+    # so we handle it differently
+    if current_shell.endswith("fish"):
+        command = ("env TERM=ansi CLICOLOR=\"\" SUBLIME=1 "
+                   "/usr/bin/login -fqpl $USER $SHELL -l -c "
+                   "'env TERM=ansi CLICOLOR=\"\" SUBLIME=1 echo $PATH | string replace -i -a \" \" \":\"'")
+    else:
+        command = ("TERM=ansi CLICOLOR=\"\" SUBLIME=1 "
+                   "/usr/bin/login -fqpl $USER $SHELL -l -c "
+                   "'TERM=ansi CLICOLOR=\"\" SUBLIME=1 printf \"%s\" \"$PATH\"'")
 
-    sys_path_string = sys_path.decode('utf-8')
+    sys_path_string = run_command(command)
     ansi_control_chars = re.compile(r'\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]')
     sys_path_string = ansi_control_chars.sub('', sys_path_string)
     sys_path_string = sys_path_string.strip().rstrip(':')
