@@ -3,6 +3,8 @@ MacShell
 
 > Originally forked from [tedmiston/SublimeFixMacPath](https://github.com/tedmiston/SublimeFixMacPath)
 
+_This fork includes support for [fish shell](http://fishshell.com/)_
+
 On OS X, Sublime Text has its `PATH` set by `launchctl`, not by your shell<sup>1</sup>. Commands like `make` run by Sublime Text are then unable to find non-system binaries, including those installed by homebrew and MacPorts.
 
 MacShell is a simple plugin for Sublime Text 2 and 3 which sets Sublime Text's `PATH` to that reported by your shell. Now, if you add homebrew's `/usr/local/bin` directory to your `PATH` in `.bash_profile` (or whatever other way you set your shell's `PATH`) Sublime Text will inherit that `PATH`.
