@@ -64,7 +64,8 @@ def get_sys_path():
     if current_shell.endswith("fish"):
         command = ("env TERM=ansi CLICOLOR=\"\" SUBLIME=1 "
                    "/usr/bin/login -fqpl $USER $SHELL -l -c "
-                   "'env TERM=ansi CLICOLOR=\"\" SUBLIME=1 echo $PATH | string replace -i -a \" \" \":\"'")
+                   "'env TERM=ansi CLICOLOR=\"\" SUBLIME=1 "
+                   "echo $PATH | string replace -a -r \"\\s+/\" \":/\" | string replace -a -r \"\\s+\\.+/\" \":\\./\"'")
     else:
         command = ("TERM=ansi CLICOLOR=\"\" SUBLIME=1 "
                    "/usr/bin/login -fqpl $USER $SHELL -l -c "
@@ -74,6 +75,7 @@ def get_sys_path():
     ansi_control_chars = re.compile(r'\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]')
     sys_path_string = ansi_control_chars.sub('', sys_path_string)
     sys_path_string = sys_path_string.strip().rstrip(':')
+
     return sys_path_string
 
 
